@@ -17,8 +17,37 @@ Resources:
   CrawlerTestOneLambda:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: src/CrawlerTestOneLambda
+      CodeUri: src
       Handler: CrawlerTestOneLambda/handler.handler
       Runtime: python3.9
       MemorySize: 1000
       Timeout: 70
+  ottoofellow:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-myawsbucket-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: alias/aws/s3
+      PublicAccessBlockConfiguration:
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  ottoofellowBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ottoofellow
+      PolicyDocument:
+        Id: RequireEncryptionInTransit
+        Version: '2012-10-17'
+        Statement:
+          - Principal: '*'
+            Action: '*'
+            Effect: Deny
+            Resource:
+              - !GetAtt ottoofellow.Arn
+              - !Sub ${ottoofellow.Arn}/*
+            Condition:
+              Bool:
+                aws:SecureTransport: 'false'

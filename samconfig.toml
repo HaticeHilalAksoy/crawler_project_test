@@ -1,8 +1,8 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "Creawler-TestAutomation"
+stack_name = "project"
 resolve_s3 = true
-s3_prefix = "Creawler-TestAutomation"
+s3_prefix = "project"
 region = "us-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
